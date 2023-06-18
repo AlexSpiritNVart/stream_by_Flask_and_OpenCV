@@ -9,6 +9,7 @@ import os
 
 app = Flask(__name__, template_folder='templates')
 cap = cv2.VideoCapture(0)
+print(f'камера подключена {cap}')
 
 global capture,rec_frame, grey, switch, neg, rec, out 
 capture=0
@@ -59,6 +60,8 @@ def pyshine_process(params, cap):
     while (cap.isOpened()):
 
         ret, frame= cap.read()
+        print(f'камера в статусе {ret}')
+        print(f'не кодированый кадр {frame}')
         if correct_corner != 42:
             frame = rotate(frame, correct_corner)
         if ret:
@@ -77,6 +80,7 @@ def pyshine_process(params, cap):
                 rec_frame=frame
                 frame= cv2.putText(cv2.flip(frame,1),"Recording...", (0,25), cv2.FONT_HERSHEY_SIMPLEX, 1, (0,0,255),4)
             frame = cv2.imencode('.JPEG', frame, [cv2.IMWRITE_JPEG_QUALITY, 20])[1].tobytes()
+            print(f'кодированый кадр {frame}')
             yield b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n'
         else:
             break
